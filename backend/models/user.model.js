@@ -10,7 +10,7 @@ const userSchema =new Schema({
         required:true
     },
 
-    name:{
+    userName:{
         type:String,
         required:true
     },
@@ -26,6 +26,18 @@ const userSchema =new Schema({
     isVerified:{
         type:Boolean,
         default:false
-    }
+    },
 
-})
+    resetPasswordToken:String,
+    resetPasswordExpiredAt:Date,
+    verificationToken:String,
+    verificationTokenExpireAt:Date
+
+},
+
+{timestamps:true}
+
+)
+
+
+export const User = mongoose.model ("User", userSchema)

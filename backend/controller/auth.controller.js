@@ -117,4 +117,58 @@ export const verifyEmail = async (req, res) => {
       });
     }
   };
+
+  export const login = async ( req ,res) =>{
+    try{
+        const {password , email} =req.body
+    const user = await User.findOne({email})
+    if(!user){
+       return  res.status(400).json({
+            success:false,
+            message:"invalid credentials"
+        })
+    }
+
+        const isPasswordValid = await bcrypt.compare(password ,user.password)
+        if(!isPasswordValid){
+           return res.status(400).json({
+                message:"password Incorrect"
+            })
+        }
+
+        // generating the tokens 
+        generateCookiesAndSetTokens(res , user._id)
+    
+    user.lastLogin = new Date();
+
+    await user.save()
+
+    res.status(200).json({
+        success:true,
+        messgae:"user login successfully",
+        user:{
+            ...user._doc,
+            password:undefined
+        },
+        
+    })
+    }
+    catch(error){
+        console.log("error in login function" ,error);
+        res.status(400).json({
+            success:false,
+            message:"login failed"
+
+        })
+    }
+  }
+
+  export const logout =async (req ,res) =>{
+    res.clearCookie('authTokens');
+    res.status(200).json({
+        success:true,
+        message:"logout successfull"
+    })
+  }
+  
   

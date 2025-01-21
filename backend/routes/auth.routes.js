@@ -4,12 +4,15 @@ import { forgotPassoword, signup ,verifyEmail } from "../controller/auth.control
 import { login } from "../controller/auth.controller.js";
 import { logout } from "../controller/auth.controller.js";
 // import { forgotPassoword } from "../controller/auth.controller.js";
-import { resetPassoword } from "../controller/auth.controller.js";
-
+import { resetPassoword ,checkAuth} from "../controller/auth.controller.js";
+import cookieParser from "cookie-parser";
+import { verifyToken } from "../middleWare/verifyToken.js";
 
 
 const router =express.Router()
 
+
+router.get("/check-auth",verifyToken , checkAuth)
 router.post('/signup' ,signup);
 router.post('/verify-email', verifyEmail)
 router.post('/login' , login)

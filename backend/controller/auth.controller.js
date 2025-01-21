@@ -13,70 +13,72 @@ import { sendSuccessResetEmail } from "../mailtrap/email.js";
 
 console.log(User)
 
-export const signup =async(req ,res)=>{
-    try{
-        const {email , password , userName} =req.body;
-        console.log('parse field', email ,password ,userName);
+export const signup = async (req, res) => {
+  try {
+    const { email, password, userName } = req.body;
+    console.log('parse field', email, password, userName);
 
-        // check all the fields 
-        if(!email || !userName || !password){
-            throw new Error ("all fields are required")
-        }
-
-        // checking for existing 
-
-            const userExist =await User.findOne({email})
-            if(userExist){
-                res.status(400).json({
-                    success:false,
-                    messgae:"userAlredy exist"
-                })
-            }
-
-            const hashedPassword =await bcrypt.hash(password , 10)
-
-            // generating the verification code
-            const generateVerificationCode = async() =>{
-                return   Math.floor (100000+Math.random()*900000).toString();
-            }
-
-            const verificationToken =await generateVerificationCode();
-
-            const user = new User({
-                email, 
-                password:hashedPassword,
-                userName,
-                verificationToken,
-                verificationTokenExpireAt:Date.now()+24 *60 * 60 *1000 // 24 hrs
-
-            })
-            // saving the user in the database
-            await user.save()
-                console.log("save db")
-            generateCookiesAndSetTokens(res , user._id)
-            console.log("generated cookies")
-            // email verification
-
-            await sendVerificationEmail (user.email ,verificationToken)
-                console.log("verification")
-            res.status(200).json({
-                success:true,
-                message:"user created successfully",
-                ...user._doc,
-                password:undefined
-            })
+    // Check all fields
+    if (!email || !userName || !password) {
+      throw new Error('All fields are required');
     }
 
-    
-
-    catch (error) {
-        res.status(400).json({
-            success: false,
-            message: "user creation unsuccessful",
-        });
+    // Check if user already exists
+    const userExist = await User.findOne({ email });
+    if (userExist) {
+      return res.status(400).json({
+        success: false,
+        message: 'User already exists',
+      });
     }
-    
-}
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate verification code
+    const generateVerificationCode = async () => {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    };
+    const verificationToken = await generateVerificationCode();
+
+    // Create a new user
+    const user = new User({
+      email,
+      password: hashedPassword,
+      userName,
+      verificationToken,
+      verificationTokenExpireAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hrs
+    });
+
+    // Save the user in the database
+    await user.save();
+    console.log('Saved to DB');
+
+    // Set cookies and tokens
+    generateCookiesAndSetTokens(res, user._id);
+    console.log('Generated cookies');
+
+    // Send verification email (this is async but doesn't need to block response)
+    await sendVerificationEmail(user.email, verificationToken);
+    console.log('Verification email sent');
+
+    // Send the response with user details
+    return res.status(200).json({
+      success: true,
+      message: 'User created successfully',
+      ...user._doc,
+      password: undefined,
+    });
+
+  } catch (error) {
+    console.log("Error in signup:", error);
+    return res.status(400).json({
+      success: false,
+      message: "User creation unsuccessful",
+    });
+  }
+};
+
 
 export const verifyEmail = async (req, res) => {
     const { code } = req.body;
@@ -248,5 +250,20 @@ export const verifyEmail = async (req, res) => {
             success:false,
             message:error.message
         })
+    }
+  }
+
+  export const checkAuth =async(req , res) =>{
+    try{
+        const user =await User.findById(req.userId).select("-password")
+        if(!user){
+            res.status(400).json({
+                success:false,
+                message:"user not found"
+            })
+        }
+    }catch(error){
+        console.log("Error in checkAuth", error);
+        res.status(400).json({success:false ,message:error.message})
     }
   }

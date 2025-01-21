@@ -254,16 +254,25 @@ export const verifyEmail = async (req, res) => {
   }
 
   export const checkAuth =async(req , res) =>{
+
     try{
         const user =await User.findById(req.userId).select("-password")
+        
+        
         if(!user){
-            res.status(400).json({
+           return res.status(400).json({
                 success:false,
                 message:"user not found"
             })
         }
+
+        res.status(200).json({
+            success:true,
+            ...user._doc,
+            password:undefined
+        })
     }catch(error){
         console.log("Error in checkAuth", error);
-        res.status(400).json({success:false ,message:error.message})
+       return  res.status(400).json({success:false ,message:error.message})
     }
   }

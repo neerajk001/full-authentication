@@ -1,7 +1,12 @@
 import jwt from 'jsonwebtoken'
 
 export const verifyToken = async(req , res , next) =>{
-    const token =req.cookies.token
+    const token =req.cookies.authTokens
+    
+    const token2  =req.cookies.token
+    
+
+    
     if(!token){
         return res.status(401).json({
             success:false,
@@ -9,7 +14,9 @@ export const verifyToken = async(req , res , next) =>{
         })
     }
    try{
+    
     const decoded =jwt.verify(token , process.env.JWT_SECRET);
+    console.log("token1", token)
     if(!decoded){
         return res.status(401).json({
              success:false,

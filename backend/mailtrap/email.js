@@ -18,7 +18,7 @@ export const sendVerificationEmail = async (email ,verificationToken) =>{
         console.log("email sent successfully", response)
     }catch(error){
         console.error(`Error sending verification`, error);
-        throw new error(`error sending verification email: ${error}`);
+        throw new Error(`error sending verification email: ${error}`);
     }
 }
 

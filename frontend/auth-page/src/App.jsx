@@ -16,7 +16,7 @@ function App() {
  // protect routes which require authentication 
   const ProtectedRoutes = ({children}) =>{
     const {isAuthenticated, user}= useAuthStore();
-    console.log("protected user",user)
+    // console.log("protected user",user)
     if(!isAuthenticated){
       return <Navigate to="/login" replace/>
 
@@ -45,7 +45,7 @@ function App() {
   }
 
 
-  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+  const { isCheckingAuth, checkAuth, } = useAuthStore();
 
   
 
@@ -60,8 +60,8 @@ function App() {
   if(isCheckingAuth){
     return <LoadingSpinner/>
   }
-  console.log("isauthenticated", isAuthenticated);
-  console.log("user", user);
+  // console.log("isauthenticated", isAuthenticated);
+  // console.log("user", user);
 
   return (
     <>

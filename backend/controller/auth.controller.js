@@ -11,7 +11,7 @@ import { sendSuccessResetEmail } from "../mailtrap/email.js";
 
 
 
-console.log(User)
+
 
 export const signup = async (req, res) => {
   try {

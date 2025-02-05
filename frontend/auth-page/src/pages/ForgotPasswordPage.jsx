@@ -19,9 +19,7 @@ const ForgotPasswordPage = () => {
         await forgotpassword(email);
 		
         setIsSubmitted(true);  // Only set to true after successful request
-		console.log("email",email)
-		console.log("setIssubmitted",isSubmitted)
-		console.log("setsubmitted",setIsSubmitted)
+		
 
     } catch (error) {
         console.error("Password reset error:", error);
@@ -29,7 +27,7 @@ const ForgotPasswordPage = () => {
     }
 };
 useEffect(() => {
-    console.log("isSubmitted changed:", isSubmitted);
+    
 }, [isSubmitted]);
 
 	return (

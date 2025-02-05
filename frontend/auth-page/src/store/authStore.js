@@ -6,7 +6,7 @@ import axios from 'axios'
 
 
 axios.defaults.withCredentials = true;
-const API_URL ='http://localhost:5001/api/auth';
+const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/auth" : "/api/auth";
 
 export const useAuthStore =create((set)=>({
     user:null,
@@ -107,7 +107,7 @@ export const useAuthStore =create((set)=>({
         set({ isCheckingAuth: true, error: null });
         try {
             const response = await axios.get(`${API_URL}/check-auth`);
-            // console.log("Check Auth Response:", response.data); // Debug log
+            console.log("Check Auth Response:", response.data); // Debug log
             
             if (response.data && response.data._id) {
                 // Ensure you're setting the user object correctly
@@ -116,7 +116,7 @@ export const useAuthStore =create((set)=>({
                     isAuthenticated: true,
                     isCheckingAuth: false,
                 });
-                // console.log("user", response.data); // Debug log
+                console.log("user", response.data); // Debug log
             } else {
                 // If no valid user data, consider setting isAuthenticated to false
                 set({

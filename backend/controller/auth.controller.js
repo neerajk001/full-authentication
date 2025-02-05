@@ -134,8 +134,9 @@ export const verifyEmail = async (req, res) => {
             message:"invalid credentials"
         })
     }
-
+        console.log("comparing password")
         const isPasswordValid = await bcrypt.compare(password ,user.password)
+        console.log("password",isPasswordValid)
         if(!isPasswordValid){
            return res.status(400).json({
                 message:"password Incorrect"
